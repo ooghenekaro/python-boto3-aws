@@ -1,0 +1,24 @@
+import boto3
+
+ec2 = boto3.client('ec2')
+
+instance_params = {
+    'ImageId': 'ami-0eb260c4d5475b901',  # Specify your desired Amazon Machine Image (AMI) ID
+    'InstanceType': 't2.micro',  # Specify the instance type
+    'MinCount': 1,  # Number of instances to launch
+    'MaxCount': 3,  # Number of instances to launch
+    
+}
+
+instances = ec2.run_instances(**instance_params)
+
+created_instance_ids = [instance['InstanceId'] for instance in instances['Instances']]
+
+tags = [
+    {'Key': 'Name', 'Value': 'Karo-Instance'},
+    {'Key': 'Environment', 'Value': 'Production'}
+]
+
+# Tag the instances
+ec2.create_tags(Resources=created_instance_ids, Tags=tags)
+
